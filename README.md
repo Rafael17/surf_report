@@ -2,7 +2,8 @@
 
 ###	Motion interactive web app designed for mobile phones
 
-## Technologies Used:
+## Technologies
 
 ReactJS		- Library for building UIs
+
 Metor		- Javascript App Platform

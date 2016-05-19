@@ -1,0 +1,136 @@
+<head>
+  <title>Surf Forcast</title>
+</head>
+ 
+<body>
+  
+  
+  <div id="render-target"></div>
+
+<script>
+
+  function deviceMotionHandler(eventData) {
+    var info, xyz = "[X, Y, Z]";
+    
+    // Grab the acceleration from the results
+    var acceleration = eventData.acceleration;
+    //info = xyz.replace("X", Math.round(acceleration.x));
+    //info = info.replace("Y", Math.round(acceleration.y));
+    //info = info.replace("Z", Math.round(acceleration.z));
+    //shake twice to calibrate compass motion
+    var a = Math.round(acceleration.x)
+    if(a>5){
+      document.getElementById("moAccel").innerHTML += a+" ";
+    }
+
+    // Grab the acceleration including gravity from the results
+    /*
+    acceleration = eventData.accelerationIncludingGravity;
+    info = xyz.replace("X", acceleration.x);
+    info = info.replace("Y", acceleration.y);
+    info = info.replace("Z", acceleration.z);
+    document.getElementById("moAccelGrav").innerHTML = info;
+    */
+    // Grab the rotation rate from the results
+    var rotation = eventData.rotationRate;
+
+    info = xyz.replace("X", Math.round(rotation.alpha));
+    info = info.replace("Y", Math.round(rotation.beta));
+    info = info.replace("Z", Math.round(rotation.gamma));
+    //document.getElementById("moRotation").innerHTML = info;
+
+    // // Grab the refresh interval from the results
+    info = eventData.interval;
+    //document.getElementById("moInterval").innerHTML = info;       
+  }
+
+  var throttle = false;
+  var hours = 0;
+  function deviceOrientation2(event){
+
+    if(throttle==false){
+      throttle=true;
+
+      var a = Math.round(event.alpha);
+      
+      if(a>180){
+        a = Math.round((360-a)||1);
+        hours++;
+      }else{
+        hours--;
+      }
+      
+      var speed = Math.round(Math.sqrt(a));
+      if(speed>2){
+        if(hours>24){
+          hours=0;
+        }else if(hours<0){
+          hours=24;
+        }
+      }
+
+
+      setTimeout(function(){throttle = false},2000/speed);
+      //document.getElementById("board").style.webkitTransform = "rotate("+(-1)*event.alpha+"deg)";
+      document.getElementById("moAccelGrav").innerHTML = speed
+
+      document.getElementById("moAccel").innerHTML = hours;
+    }
+
+    
+  }
+  function setDefaults(){
+    var offsets = document.getElementById('wave').getBoundingClientRect();
+    defaults.left = offsets.left;
+    defaults.top = offsets.top;
+  }
+  var defaults = {};
+  var beaches = [
+    {name:'Sunset Cliffs',src:"/images/sunset-cliffs.jpg"},
+    {name:'Pacific Beach',src:"/images/pacific_beach.jpg"},
+    {name:'La Jolla Shores',src:"/images/la_jolla_shores.jpg"},
+    {name:'Blacks',src:"/images/blacks.jpg"}
+  ];
+  function deviceOrientation(event){
+    if(!defaults.left){
+      setDefaults();
+    }
+
+    var g = Math.round(event.gamma);
+    var b = Math.round(event.beta);
+    var a = event.alpha;
+
+    document.getElementById("wave").style.left = defaults.left+g+"px";
+    document.getElementById("wave").style.top = defaults.top+b+"px";
+    document.getElementById("board").style.webkitTransform = "rotate("+(-1)*a+"deg)";
+    //document.getElementById("moAccel").innerHTML = defaults.left;
+
+    var id = 3;
+    if(a>330){
+      id=0;
+    }else if(a>300){
+      id=1;
+    }else if(a>30){
+      id=2;
+    }
+
+    document.getElementById("wave").src=beaches[id].src;
+    document.getElementById("beach_name").innerHTML=beaches[id].name;
+    
+
+  }
+
+  /*
+  if (window.DeviceMotionEvent) {
+    window.addEventListener('devicemotion', deviceMotionHandler, false);
+    window.addEventListener('deviceorientation',deviceOrientation, false);
+  } else {
+    document.getElementById("dmEvent").innerHTML = "Not supported."
+  } 
+  */
+  
+
+  </script>
+
+</body>
+

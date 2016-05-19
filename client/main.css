@@ -1,0 +1,76 @@
+/* CSS declarations go here */
+
+.bg {
+  position: fixed; 
+  top: -50%; 
+  left: -50%; 
+  width: 200%; 
+  height: 200%;
+}
+.bg img {
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  margin: auto; 
+  min-width: 60%;
+  min-height: 60%;
+}
+
+
+
+
+#beach_name{
+	font-size:2em;
+	color:white;
+	position:absolute;
+	background:rgba(54, 25, 25, .5);
+	font-family:myriad-pro, 'Helvetica Neue', Helvetica, Arial, Verdana, sans-serif;
+	padding:20px;
+	z-index:2;
+}
+
+#board{
+	position: absolute;
+	top:50px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	
+}
+.marker{
+	top:0px;
+	left:0px;
+	position:absolute;
+	width:10px;
+	height:10px;
+	background-color:red;
+	border-radius: 50%;
+}
+
+.compass {
+	position: absolute;
+	top:100px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+
+}
+.circle {
+	position: absolute;
+	top:100px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+
+	border-radius: 50%;
+	width: 500px;
+	height: 500px; 
+	border:2px dashed grey;
+	background: rgba(54, 25, 25, .5);
+	/* width and height can be anything, as long as they're equal */
+}

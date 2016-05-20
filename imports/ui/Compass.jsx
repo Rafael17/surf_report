@@ -34,7 +34,7 @@ export default class Compass extends Component {
 			<div>
 				<svg className="compass" height={Compass.statics.svg.height} width={Compass.statics.svg.width}>
 					<circle cx={Compass.statics.circle.cx} cy={Compass.statics.circle.cy} r={Compass.statics.circle.radius} stroke="black" fill="black" fillOpacity="0.4"  strokeDasharray="5,5"/>
-					{this.state.markers}
+					
 				</svg>
 				<img id="board" style={styles} src="/images/surfboard.png"/>
 		  	</div>
@@ -55,6 +55,8 @@ Compass.statics = {
 }
 
 /*
+
+{this.state.markers}
 <circle cy={ 40*Math.sin(0 * Math.PI / 180.0) + 50} cx={ 40* Math.cos(0 * Math.PI / 180.0) + 50} r="5" stroke="black" stroke-width="3" fill="blue"/>
 <img id="board" style={this.state.rose.styles} src="/images/surfboard.png"/>
 Task.propTypes = {

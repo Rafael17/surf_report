@@ -21,25 +21,34 @@ export default class App extends Component {
       elem.condition = '';
       return elem;
     })
+    
     this.state = {
       chosen:markers[0],
       markers:markers,
       ax:[],
-      shake_capturing:false
+      shake_capturing:false,
+      allow_orientation:true
     }
   }
 
+  
 
-  // Currently every component has its onw device motion listener. 
-  // This should be improved to only listen in the parent component and pass it down to the childern.
   componentDidMount() {
     if (window.DeviceMotionEvent){
-      window.addEventListener('deviceorientation', this.handleDeviceOrientation.bind(this), false);
-      window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this), false);
+      window.addEventListener('deviceorientation', this.handleDeviceOrientation.bind(this));
+      window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this));
     }
     this.state.markers.forEach(this.requestService.bind(this))
-    
   }
+
+  componentWillUnmount () {
+    window.removeEventListener('deviceorientation', this.handleDeviceOrientation.bind(this));
+    window.removeEventListener('devicemotion', this.handleDeviceMotion.bind(this));
+  }
+
+
+
+
 
   requestService(elem,index){
     // Using yahoo api to bypass CORS from spitcast
@@ -47,7 +56,7 @@ export default class App extends Component {
     var yql = "https://query.yahooapis.com/v1/public/yql?q=";
     var params = "&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
     var url = yql+query+params;
-    this.serverRequest = $.get(url, function(response){this.serviceCallback(index,response)}.bind(this));
+    $.get(url, function(response){this.serviceCallback(index,response)}.bind(this));
   }
 
   serviceCallback(index,result) {
@@ -66,59 +75,82 @@ export default class App extends Component {
     }
   }
 
-  componentWillUnmount () {
-    window.removeEventListener('deviceorientation', this.handleDeviceOrientation, false);
+ 
+
+
+
+
+
+
+
+  
+  handleDeviceMotion (event) {
+    if(this.state.allow_orientation !== true){
+      return;
+    }
+    this.shakeGesture(event.acceleration.x);
   }
 
-
-
-
-  // Capturing shake gesture (fast acceleration on x each way within n seconds of eachother)
-  handleDeviceMotion (event) {
-    const ax = event.acceleration.x;
-    let that = this;
+  // Capturing shake gesture (fast acceleration $threshold on x each way within $time seconds of eachother)
+  shakeGesture(ax) {
     const threshold = 5;
     const time = 1000;
 
     if((ax>threshold||ax<(-1)*threshold) && this.state.shake_capturing === false){
-      this.setState({shake_capturing:true})
-      setTimeout(that.capturedGesture.bind(that),time)
+      this.setState({shake_capturing:true});
+      this.setState({shake_dir:((ax>0)?1:-1)})
+      setTimeout(this.capturingGesture.bind(this),time)
     }
-    if(this.state.shake_capturing === true && (ax>threshold||ax<(-1)*threshold)){
-      let test = this.state.ax;
-      test.push(ax);
-      this.setState({ax:test});
+    if(ax>threshold && this.state.shake_dir>0 && this.state.shake_capturing === true){
+      this.setState({shook:true});
+    }
+    if(ax<threshold && this.state.shake_dir<0 && this.state.shake_capturing === true){
+      this.setState({shook:true});
     }
   }
 
-  capturedGesture () {
-    
-    // Need to know which way we are moving first
-    let dir = 0;
-    if(this.state.ax[0]>0){
-      dir=1;
-    }
+  capturingGesture() {
+    if(this.state.shook === true){
+      //window.removeEventListener('deviceorientation', this.handleDeviceOrientation);
+      this.setState({allow_orientation:false});
+      
+      //Number btw 1-4
+      let stop = ((Math.random()*10)%3+1)*1000;
+      let counter = this.state.alpha;
+      let id = setInterval(function(){
+        counter=counter-4;
+        if(counter<0){
+          counter=360;
+        }
+        this.moveElements(counter%360).bind(this);
+      }.bind(this),15);
 
-    let total = this.state.ax.reduce((total,num,index) =>{
-      if(total%2 === 0 && num<0)
-        return ++total;
-      else if(total%2 === 1 && num>0)
-        return ++total;
-      else
-        return total;
-    },0)
-    
-    if((total+dir)>2){
-      alert("Shake and Bake!");
+      setTimeout(function(){
+          clearInterval(id);
+          setTimeout(function(){
+            this.setState({allow_orientation:true})
+          }.bind(this),2000);
+      }.bind(this),stop);
+
     }
-    this.setState({ax:[]});
-    this.setState({shake_capturing:false})
+    this.setState({shake_capturing:false});
+    this.setState({shake_dir:0});
   }
+
 
   handleDeviceOrientation(event) {
-    this.setState({alpha:event.alpha})
+    //this.componentWillUnmount();
+    //not able to remove any device event, instead:
+    if(this.state.allow_orientation !== true){
+      return;
+    }
+    this.moveElements(event.alpha);
+  }
 
-    const index = Math.floor(event.alpha/(360/this.state.markers.length));
+  moveElements(alpha) {
+    this.setState({alpha:alpha})
+
+    const index = Math.floor(alpha/(360/this.state.markers.length));
     if(this.state.chosen.index !== index){
       this.setState({chosen:this.state.markers[index]});
     }
@@ -127,9 +159,14 @@ export default class App extends Component {
   render() {
     return (
       <div className="container">
-        <div id="beach_name">{this.state.chosen.name}
-          <br/>Wave Size: {this.state.chosen.wave}
-          <br/>Conditions: {this.state.chosen.condition}</div>
+        <div id="beach_stats">{this.state.chosen.name}
+          <div>
+            {((this.state.chosen.wave)?('Wave Size: '+this.state.chosen.wave):"")}
+          </div>
+          <div>
+            {((this.state.chosen.wave)?('Conditions: '+this.state.chosen.condition):"")}
+          </div>
+        </div>
         <header>
           <h1>Beaches</h1>
         </header>

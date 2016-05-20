@@ -36,7 +36,7 @@
 
 #board{
 	position: absolute;
-	top:50px;
+	top:80px;
 	bottom: 0;
 	left: 0;
 	right: 0;
@@ -60,7 +60,6 @@
 	left: 0;
 	right: 0;
 	margin: auto;
-
 }
 .circle {
 	position: absolute;
@@ -75,5 +74,4 @@
 	height: 500px; 
 	border:2px dashed grey;
 	background: rgba(54, 25, 25, .5);
-	/* width and height can be anything, as long as they're equal */
 }

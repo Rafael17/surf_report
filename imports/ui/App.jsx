@@ -37,6 +37,8 @@ export default class App extends Component {
     if (window.DeviceMotionEvent){
       window.addEventListener('deviceorientation', this.handleDeviceOrientation.bind(this));
       window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this));
+    }else{
+      alert("Device motion events not available. Please open this site from a mobile device");
     }
     this.state.markers.forEach(this.requestService.bind(this))
   }
@@ -167,9 +169,6 @@ export default class App extends Component {
             {((this.state.chosen.wave)?('Conditions: '+this.state.chosen.condition):"")}
           </div>
         </div>
-        <header>
-          <h1>Beaches</h1>
-        </header>
         <MotionFollowerBackground image={this.state.chosen.src}/>
         <Compass alpha={this.state.alpha} markers={this.state.markers}/>
       </div>

@@ -3,12 +3,6 @@ import React, { Component, PropTypes } from 'react';
 // Task component - represents a single todo item
 export default class Compass extends Component {
 	
-	constructor(props) {
-		super(props);
-		this.state = {
-			rose:{styles:{}}
-		}
-	}
 
   	componentWillMount() {
 
@@ -20,8 +14,9 @@ export default class Compass extends Component {
   			const cx = Compass.statics.circle.radius* Math.cos(a * Math.PI / 180.0) + Compass.statics.circle.cx;
   			return <circle cy={cy} cx={ cx} r="20"  fill="blue"/>
   		})
-  		
-  		this.setState({markers:circles});
+  		// Uncomment next line and then place following line into svg to see marker points in the circle
+  		// this.setState({markers:circles});
+  		// {this.state.markers}
   	}
 
 	render() {
@@ -44,27 +39,15 @@ export default class Compass extends Component {
 
 Compass.statics = {
 	circle:{
-		radius:250,
-		cx:250,
-		cy:250
+		radius:300,
+		cx:300,
+		cy:300
 	},
 	svg:{
-		height:500,
-		width:500
+		height:600,
+		width:600
 	}
 }
-
-/*
-
-{this.state.markers}
-<circle cy={ 40*Math.sin(0 * Math.PI / 180.0) + 50} cx={ 40* Math.cos(0 * Math.PI / 180.0) + 50} r="5" stroke="black" stroke-width="3" fill="blue"/>
-<img id="board" style={this.state.rose.styles} src="/images/surfboard.png"/>
-Task.propTypes = {
-  // This component gets the task to display through a React prop.
-  // We can use propTypes to indicate it is required
-  task: PropTypes.object.isRequired,
-};
-*/
 
 
 

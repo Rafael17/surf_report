@@ -7,3 +7,5 @@
 ReactJS		- Library for building UIs
 
 Metor		- Javascript App Platform
+
+Open from your mobile phone: http://truesurfreport.herokuapp.com/
